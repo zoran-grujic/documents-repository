@@ -24,7 +24,7 @@ use app\models\DocumentTypes;
         Organization::find()
             ->joinWith('userOrganizations') // Assuming a relation exists between Organization and UserOrganization
             ->where(['user_organization.user_id' => Yii::$app->user->id]) // Filter by the active user's ID
-            ->select(['Organizations.name', 'Organizations.id'])
+            ->select(['organizations.name', 'organizations.id'])
             ->indexBy('id')
             ->column(),
         ['prompt' => 'Изаберите организацију']
