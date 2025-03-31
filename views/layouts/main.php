@@ -42,26 +42,16 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
 
         echo Nav::widget([
             'options' => ['class' => 'navbar-nav'],
-            'items' => [
+            'items' => array_filter([
                 ['label' => 'Сви Документи', 'url' => ['/documents/index']],
-                [
+                Yii::$app->user->identity && Yii::$app->user->identity->status === 'admin' ? [
                     'label' => 'Корисници',
                     'url' => ['/user/index'],
-                    'items' => Yii::$app->user->identity && Yii::$app->user->identity->status === 'admin' ? [
+                    'items' => [
                         ['label' => 'Kорисници', 'url' => ['/user/index']],
                         ['label' => 'Додај корисникa', 'url' => ['/user/create']],
-                    ] : null, // Show dropdown only if the user is an admin
-                ],
-                // Add Organizations menu item for admin users
-                Yii::$app->user->identity && Yii::$app->user->identity->status === 'admin' ? [
-                    'label' => 'Организације',
-                    'url' => ['/organization/index'],
-                    'items' => [
-                        ['label' => 'Листа организација', 'url' => ['/organization/index']],
-                        ['label' => 'Додај организацију', 'url' => ['/organization/create']],
                     ],
                 ] : null,
-                // Add Document Types menu item for admin users
                 Yii::$app->user->identity && Yii::$app->user->identity->status === 'admin' ? [
                     'label' => 'Типови докумената',
                     'url' => ['/document-type/index'],
@@ -80,8 +70,8 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                         ['class' => 'nav-link btn btn-link logout']
                     )
                     . Html::endForm()
-                    . '</li>'
-            ]
+                    . '</li>',
+            ]),
         ]);
 
         NavBar::end();
