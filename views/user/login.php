@@ -6,6 +6,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use app\models\User; // Import the User model
 
 $this->title = 'Login';
 $this->params['breadcrumbs'][] = $this->title;
@@ -56,9 +57,28 @@ $this->params['breadcrumbs'][] = $this->title;
                         <?php endforeach; ?>
                     </ul>
                 </div>
-
             <?php endif; ?>
+            <---
+                <!-- Display hashed password for debugging -->
+                <?php if (Yii::$app->request->isPost): ?>
+                    <?php
+                    // Fetch the hashed password from the database
+                    $user = User::findOne(['email' => $model->email]);
+                    $dbPasswordHash = $user ? $user->password : 'User not found';
 
+                    // Generate a hash of the entered password
+                    $enteredPasswordHash = Yii::$app->getSecurity()->generatePasswordHash($model->password);
+                    ?>
+                    <div class="alert alert-info">
+                        <strong>Hashed Password from Database:</strong>
+                        <pre><?= Html::encode($dbPasswordHash) ?></pre>
+                    </div>
+                    <div class="alert alert-info">
+                        <strong>Hash of Entered Password:</strong>
+                        <pre><?= Html::encode($enteredPasswordHash) ?></pre>
+                    </div>
+                    --->
+                <?php endif; ?>
 
         </div>
     </div>
