@@ -137,6 +137,7 @@ class DocumentsController extends Controller
         $uploadedFile = \yii\web\UploadedFile::getInstanceByName('file');
         if ($uploadedFile)
         {
+            Yii::info('File received: ' . $uploadedFile->name, __METHOD__);
             $uploadDir = Yii::getAlias('@webroot/files/' . date('Y-m-d'));
             if (!is_dir($uploadDir))
             {
@@ -152,7 +153,7 @@ class DocumentsController extends Controller
 
             if ($uploadedFile->saveAs($filePath))
             {
-                $fullUrl = Yii::$app->request->hostInfo . '/files/' . date('Y-m-d') . '/' . $uniqueFileName; // Generate full URL
+                $fullUrl = Yii::$app->request->hostInfo . '/files/' . date('Y-m-d') . '/' . $uniqueFileName;
                 return $this->asJson(['success' => true, 'fileUrl' => $fullUrl]);
             }
             else

@@ -44,7 +44,7 @@ class Documents extends ActiveRecord
     public function rules()
     {
         return [
-            [['title', 'organization_id', 'user_id', 'type_id'], 'required'], // Required fields
+            [['title', 'organization_id', 'user_id', 'type_id', 'url'], 'required'], // Required fields
             [['organization_id', 'user_id', 'type_id'], 'integer'], // Ensure organization_id, user_id, and type_id are integers
             [['date_insert', 'date_create'], 'safe'], // Allow date and datetime fields
             [['title', 'url'], 'string', 'max' => 256], // Limit title and URL to 256 characters

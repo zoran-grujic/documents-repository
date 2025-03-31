@@ -15,7 +15,7 @@ use app\models\DocumentTypes;
 <div class="documents-form">
 
     <?php $form = ActiveForm::begin([
-        'options' => ['enctype' => 'multipart/form-data'], // Enable file upload
+        'options' => ['enctype' => 'multipart/form-data', 'id' => 'form-document'], // Enable file upload
     ]); ?>
 
     <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
@@ -46,11 +46,11 @@ use app\models\DocumentTypes;
 
     <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
 
-    <?= $form->field($model, 'url')->textInput(['maxlength' => true, 'id' => 'url-field']) ?>
-
-    <div id="file-upload-section" style="display: none;">
-        <?= $form->field($model, 'file')->fileInput(['id' => 'file-input']) ?>
+    <div class="form-group">
+        <?= Html::button('Убаци фајл и генериши нови URL', ['class' => 'btn btn-info', 'id' => 'uploadform-button']) ?>
     </div>
+
+    <?= $form->field($model, 'url')->textInput(['maxlength' => true, 'id' => 'url-field']) ?>
 
     <div class="form-group">
         <?= Html::submitButton('Сачувај', ['class' => 'btn btn-success', 'id' => 'submit-button']) ?>
@@ -64,44 +64,58 @@ use app\models\DocumentTypes;
 $uploadUrl = \yii\helpers\Url::to(['documents/upload-file']); // URL for file upload action
 $csrfToken = Yii::$app->request->csrfToken; // Get CSRF token
 $js = <<<JS
-document.getElementById('submit-button').addEventListener('click', function(event) {
-    var urlField = document.getElementById('url-field');
-    if (!urlField.value) {
-        event.preventDefault(); // Prevent form submission
-        if (confirm('Да ли желите да убаците нови фајл?')) {
-            document.getElementById('file-upload-section').style.display = 'block'; // Show file upload section
-        } else {
-            alert('Слање је отказано.');
+// Initialize the jQuery dialog
+$('#file-upload-dialog').dialog({
+    autoOpen: false,
+    modal: true,
+    title: 'Upload File',
+    width: 400,
+    buttons: {
+        "Upload": function() {
+            var formData = new FormData();
+            formData.append('file', $('#file-input')[0].files[0]);
+            formData.append('_csrf', '$csrfToken'); // Append CSRF token for security
+
+            $.ajax({
+                url: '$uploadUrl',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(data) {
+                    if (data.success) {
+                        $('#url-field').val(data.fileUrl); // Set the uploaded file URL
+                        alert('Фајл је успешно отпремљен.');
+                        $('#file-upload-dialog').dialog('close'); // Close the dialog
+                    } else {
+                        alert('Грешка при отпремању фајла: ' + (data.error || 'Unknown error.'));
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                    alert('Грешка при отпремању фајла.');
+                }
+            });
+        },
+        "Cancel": function() {
+            $(this).dialog('close');
         }
     }
 });
 
-document.getElementById('file-input').addEventListener('change', function () {
-    var fileInput = this;
-    var formData = new FormData();
-    formData.append('file', fileInput.files[0]);
-    formData.append('_csrf', '$csrfToken'); // Add CSRF token to the request
-
-    fetch('$uploadUrl', {
-        method: 'POST',
-        body: formData,
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            document.getElementById('url-field').value = data.fileUrl; // Set the uploaded file URL
-            alert('Фајл је успешно отпремљен.');
-            document.getElementById('file-upload-section').style.display = 'none'; // Hide file upload section
-        } else {
-            alert('Грешка при отпремању фајла: ' + (data.error || 'Unknown error.'));
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Грешка при отпремању фајла.');
-    });
+$('#uploadform-button').on('click', function(event) {    
+    $('#file-upload-dialog').dialog('open'); // Open the dialog
 });
 JS;
 
 $this->registerJs($js);
 ?>
+
+<div id="file-upload-dialog" style="display: none;">
+    <?php $form = ActiveForm::begin([
+        'options' => ['enctype' => 'multipart/form-data', 'id' => 'upload-form'], // Enable file upload
+    ]); ?>
+    <p>Молимо вас да изаберете фајл за отпремање:</p>
+    <?= Html::fileInput('file', null, ['id' => 'file-input']) ?>
+    <?php ActiveForm::end(); ?>
+</div>
