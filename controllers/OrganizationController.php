@@ -172,4 +172,27 @@ class OrganizationController extends Controller
 
         return $this->goHome();
     }
+
+    /**
+     * Searches for organizations by name.
+     *
+     * @param string $term The search term.
+     * @return \yii\web\Response
+     */
+    public function actionOrganizationList($term)
+    {
+        $results = \app\models\Organization::find()
+            ->select(['id', 'name'])
+            ->where(['like', 'name', $term])
+            ->asArray()
+            ->all();
+
+        return $this->asJson(array_map(function ($organization)
+        {
+            return [
+                'label' => $organization['name'],
+                'value' => $organization['id'],
+            ];
+        }, $results));
+    }
 }

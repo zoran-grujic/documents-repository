@@ -258,4 +258,21 @@ class UserController extends Controller
 
         throw new \yii\web\NotFoundHttpException('The requested user does not exist.');
     }
+
+    public function actionUserList($term)
+    {
+        $results = \app\models\User::find()
+            ->select(['id', 'name'])
+            ->where(['like', 'name', $term])
+            ->asArray()
+            ->all();
+
+        return $this->asJson(array_map(function ($user)
+        {
+            return [
+                'label' => $user['name'],
+                'value' => $user['id'],
+            ];
+        }, $results));
+    }
 }

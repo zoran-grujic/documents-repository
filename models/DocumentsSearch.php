@@ -17,7 +17,7 @@ class DocumentsSearch extends Documents
     {
         return [
             [['id', 'organization_id', 'user_id', 'type_id'], 'integer'], // Ensure these fields are integers
-            [['title', 'date_create', 'description', 'url'], 'safe'], // Allow these fields to be searched
+            [['title', 'date_create', 'date_insert', 'description', 'url'], 'safe'], // Allow these fields to be searched
         ];
     }
 
@@ -58,16 +58,40 @@ class DocumentsSearch extends Documents
 
         // Grid filtering conditions
         $query->andFilterWhere([
-            'id' => $this->id,
+            //'id' => $this->id,
             'organization_id' => $this->organization_id,
             'user_id' => $this->user_id,
             'type_id' => $this->type_id,
-            'date_create' => $this->date_create,
+            //'date_create' => $this->date_create,
         ]);
 
         $query->andFilterWhere(['like', 'title', $this->title])
             ->andFilterWhere(['like', 'description', $this->description])
             ->andFilterWhere(['like', 'url', $this->url]);
+
+        // Filter by date range
+        if (!empty($this->date_create))
+        {
+            $dateRange = explode(' - ', $this->date_create);
+            if (count($dateRange) === 2)
+            {
+
+                $query->andFilterWhere(['between', 'date_create', $dateRange[0], $dateRange[1]]);
+            }
+        }
+        \Yii::$app->session->setFlash('success', " date_insert: " . $this->date_insert); // Debugging line to check the value of date_insert
+        if (!empty($this->date_insert))
+        {
+            \Yii::$app->session->setFlash('success', "not empty date_insert: " . $this->date_insert); // Debugging line to check the value of date_insert
+            $dateRange = explode(' - ', $this->date_insert);
+            if (count($dateRange) === 2)
+            {
+                $query->andFilterWhere(['between', 'date_insert', $dateRange[0], $dateRange[1]]);
+            }
+        }
+
+        \Yii::$app->session->setFlash('error', "<pre>{$this->date_insert}\n" . print_r($params, true) . '</pre>');
+        \Yii::$app->session->setFlash('info', $query->createCommand()->rawSql); // Debugging line to check the SQL query
 
         return $dataProvider;
     }

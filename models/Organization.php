@@ -40,7 +40,7 @@ class Organization extends ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name' => 'Назив',
+            'name' => 'Назив организације',
             'note' => 'Напомена',
         ];
     }

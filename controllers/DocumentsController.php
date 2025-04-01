@@ -38,9 +38,26 @@ class DocumentsController extends Controller
         $searchModel = new DocumentsSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
+        // Fetch the organization name if organization_id is set
+        $organizationName = null;
+        if (!empty($searchModel->organization_id))
+        {
+            $organization = \app\models\Organization::findOne($searchModel->organization_id);
+            $organizationName = $organization ? $organization->name : null;
+        }
+
+        $userName = null;
+        if (!empty($searchModel->user_id))
+        {
+            $user = \app\models\User::findOne($searchModel->user_id);
+            $userName = $user ? $user->name : null;
+        }
+
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'organizationName' => $organizationName, // Pass the organization name to the view
+            'userName' => $userName, // Pass the user name to the view
         ]);
     }
 
