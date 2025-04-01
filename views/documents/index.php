@@ -25,7 +25,30 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
 
             //'id',
-            'title',
+            [
+                'attribute' => 'title',
+                'format' => 'raw', // Allow raw HTML for the link or error label
+                'value' => function ($model)
+                {
+                    if (!empty($model->url))
+                    {
+                        // If the URL is not empty, display the title as a link
+                        return Html::a(Html::encode($model->title), $model->url, [
+                            'title' => 'Погледај документ', // Tooltip text
+                            'class' => 'document-link', // Optional: Add a CSS class for styling
+                            'target' => '_blank', // Open the link in a new tab
+                        ]);
+                    }
+                    else
+                    {
+                        // If the URL is empty, display an error label
+                        return Html::tag('span', $model->title, [
+                            'class' => 'text-danger', // Add a CSS class for styling the error
+                            'title' => 'URL није доступан за овај документ', // Tooltip text
+                        ]);
+                    }
+                },
+            ],
             [
                 'attribute' => 'organization_id',
                 'value' => 'organization.name',

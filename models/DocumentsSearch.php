@@ -79,10 +79,10 @@ class DocumentsSearch extends Documents
                 $query->andFilterWhere(['between', 'date_create', $dateRange[0], $dateRange[1]]);
             }
         }
-        \Yii::$app->session->setFlash('success', " date_insert: " . $this->date_insert); // Debugging line to check the value of date_insert
+        //\Yii::$app->session->setFlash('success', " date_insert: " . $this->date_insert); // Debugging line to check the value of date_insert
         if (!empty($this->date_insert))
         {
-            \Yii::$app->session->setFlash('success', "not empty date_insert: " . $this->date_insert); // Debugging line to check the value of date_insert
+            //\Yii::$app->session->setFlash('success', "not empty date_insert: " . $this->date_insert); // Debugging line to check the value of date_insert
             $dateRange = explode(' - ', $this->date_insert);
             if (count($dateRange) === 2)
             {
@@ -90,8 +90,8 @@ class DocumentsSearch extends Documents
             }
         }
 
-        \Yii::$app->session->setFlash('error', "<pre>{$this->date_insert}\n" . print_r($params, true) . '</pre>');
-        \Yii::$app->session->setFlash('info', $query->createCommand()->rawSql); // Debugging line to check the SQL query
+        //\Yii::$app->session->setFlash('error', "<pre>{$this->date_insert}\n" . print_r($params, true) . '</pre>');
+        //\Yii::$app->session->setFlash('info', $query->createCommand()->rawSql); // Debugging line to check the SQL query
 
         return $dataProvider;
     }
