@@ -80,7 +80,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     [
                         'class' => 'form-control',
                         'id' => 'user-autocomplete',
-                        'placeholder' => 'По корисникау',
+                        'placeholder' => 'По кориснику',
                     ]
                 ) .
                     Html::hiddenInput(
