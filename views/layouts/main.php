@@ -68,6 +68,14 @@ $this->registerJsFile('https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/s
                         ['label' => 'Додај тип', 'url' => ['/document-type/create']],
                     ],
                 ] : null,
+                Yii::$app->user->identity && Yii::$app->user->identity->status === 'admin' ? [
+                    'label' => 'Организације',
+                    'url' => ['/organization/index'],
+                    'items' => [
+                        ['label' => 'Листа организација', 'url' => ['/organization/index']],
+                        ['label' => 'Додај организацију', 'url' => ['/organization/create']],
+                    ],
+                ] : null,
                 ['label' => 'Контакт', 'url' => ['/site/contact']],
                 Yii::$app->user->isGuest
                     ? ['label' => 'Пријава', 'url' => ['user/login']]
@@ -99,7 +107,7 @@ $this->registerJsFile('https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/s
     <footer id="footer" class="mt-auto py-3 bg-light">
         <div class="container">
             <div class="row text-muted">
-                <div class="col-md-6 text-center text-md-start">&copy; Зоран <?= date('Y') ?></div>
+                <div class="col-md-6 text-center text-md-start">&copy; Зоран & Драган<?= date('Y') ?></div>
                 <div class="col-md-6 text-center text-md-end"><?= Yii::powered() ?></div>
             </div>
         </div>

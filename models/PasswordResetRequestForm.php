@@ -25,17 +25,18 @@ class PasswordResetRequestForm extends Model
 
         if (!$user)
         {
+            Yii::error('User not found for email: ' . $this->email, __METHOD__);
             return false;
         }
 
-        // Generate a password reset token
         $user->password_reset_token = Yii::$app->security->generateRandomString() . '_' . time();
         if (!$user->save())
         {
+            Yii::error('Failed to save user: ' . json_encode($user->errors), __METHOD__);
             return false;
         }
 
-        return Yii::$app
+        $result = Yii::$app
             ->mailer
             ->compose(
                 ['html' => 'passwordResetToken-html', 'text' => 'passwordResetToken-text'],
@@ -45,5 +46,12 @@ class PasswordResetRequestForm extends Model
             ->setTo($this->email)
             ->setSubject('Password reset for ' . Yii::$app->name)
             ->send();
+
+        if (!$result)
+        {
+            Yii::error('Failed to send email to: ' . $this->email, __METHOD__);
+        }
+
+        return $result;
     }
 }
