@@ -3,6 +3,7 @@
 namespace app\models;
 
 use yii\db\ActiveRecord;
+use Yii;
 
 class User extends ActiveRecord implements \yii\web\IdentityInterface
 {
@@ -153,6 +154,7 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
             'email' => 'Електронска адреса',
             'password' => 'Лозинка',
             'auth_key' => 'Authentication Key',
+            'password_reset_token' => 'Password Reset Token',
             'access_token' => 'Access Token',
             'status' => 'Статус',
         ];
@@ -180,5 +182,23 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
     public function getUserOrganizations()
     {
         return $this->hasMany(UserOrganization::class, ['user_id' => 'id']);
+    }
+
+    /**
+     * Checks if the password reset token is valid
+     *
+     * @param string $token
+     * @return bool
+     */
+    public static function isPasswordResetTokenValid($token)
+    {
+        if (empty($token))
+        {
+            return false;
+        }
+
+        $timestamp = (int) substr($token, strrpos($token, '_') + 1);
+        $expire = Yii::$app->params['user.passwordResetTokenExpire'];
+        return $timestamp + $expire >= time();
     }
 }

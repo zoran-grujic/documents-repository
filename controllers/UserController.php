@@ -9,6 +9,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\ForbiddenHttpException;
 use app\models\UserOrganization;
+use app\models\ResetPasswordForm; // Import ResetPasswordForm
 
 class UserController extends Controller
 {
@@ -274,5 +275,49 @@ class UserController extends Controller
                 'value' => $user['id'],
             ];
         }, $results));
+    }
+
+    public function actionRequestPasswordReset()
+    {
+        $model = new \app\models\PasswordResetRequestForm();
+
+        if ($model->load(Yii::$app->request->post()) && $model->validate())
+        {
+            if ($model->sendEmail())
+            {
+                Yii::$app->session->setFlash('success', 'Check your email for further instructions.');
+                return $this->goHome();
+            }
+            else
+            {
+                Yii::$app->session->setFlash('error', 'Sorry, we are unable to reset the password for the provided email address.');
+            }
+        }
+
+        return $this->render('requestPasswordReset', [
+            'model' => $model,
+        ]);
+    }
+
+    public function actionResetPassword($token)
+    {
+        $user = User::findOne(['password_reset_token' => $token]);
+
+        if (!$user || !$user->isPasswordResetTokenValid($token))
+        {
+            throw new \yii\web\BadRequestHttpException('Invalid password reset token.');
+        }
+
+        $model = new \app\models\ResetPasswordForm($user);
+
+        if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->resetPassword())
+        {
+            Yii::$app->session->setFlash('success', 'New password was saved.');
+            return $this->goHome();
+        }
+
+        return $this->render('resetPassword', [
+            'model' => $model,
+        ]);
     }
 }

@@ -45,6 +45,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
             <?php ActiveForm::end(); ?>
 
+            <p>
+                <?= Html::a('Forgot Password?', ['user/request-password-reset']) ?>
+            </p>
+
             <!-- Display error messages if login fails -->
             <?php if ($model->hasErrors()): ?>
                 <div class="alert alert-danger">
@@ -58,8 +62,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     </ul>
                 </div>
             <?php endif; ?>
-            <---
-                <!-- Display hashed password for debugging -->
+
+            <!-- Display hashed password for debugging 
                 <?php if (Yii::$app->request->isPost): ?>
                     <?php
                     // Fetch the hashed password from the database
@@ -78,7 +82,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         <pre><?= Html::encode($enteredPasswordHash) ?></pre>
                     </div>
                     --->
-                <?php endif; ?>
+        <?php endif; ?>
 
         </div>
     </div>
