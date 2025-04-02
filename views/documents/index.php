@@ -59,7 +59,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     [
                         'class' => 'form-control',
                         'id' => 'organization-autocomplete',
-                        'placeholder' => 'Претражите организацију',
+                        'placeholder' => 'По организацији',
                     ]
                 ) .
                     Html::hiddenInput(
@@ -80,7 +80,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     [
                         'class' => 'form-control',
                         'id' => 'user-autocomplete',
-                        'placeholder' => 'Претражите корисника',
+                        'placeholder' => 'По корисникау',
                     ]
                 ) .
                     Html::hiddenInput(
@@ -124,7 +124,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     $searchModel,
                     'type_id',
                     \yii\helpers\ArrayHelper::map(\app\models\DocumentTypes::find()->all(), 'id', 'name'),
-                    ['class' => 'form-control', 'prompt' => 'Изаберите тип документа'] // Add a prompt for the dropdown
+                    ['class' => 'form-control', 'prompt' => 'Тип документа'] // Add a prompt for the dropdown
                 ),
             ],
 
