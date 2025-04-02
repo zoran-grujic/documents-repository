@@ -71,6 +71,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
             [
                 'attribute' => 'user_id',
+                'label' => 'Док. унео', // Set the custom label
                 'value' => 'user.name', // Display the user's name
                 'filter' =>
                 Html::textInput(
