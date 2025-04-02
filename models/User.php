@@ -116,7 +116,7 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
         if (parent::beforeSave($insert))
         {
             // Hash the password only if it is being set or updated
-            if ($this->isAttributeChanged('password'))
+            if ($this->isAttributeChanged('password') && !empty($this->password))
             {
                 $this->password = \Yii::$app->security->generatePasswordHash($this->password);
             }
@@ -137,6 +137,8 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
             ['status', 'in', 'range' => ['admin', 'user']], // Validate status
             ['password', 'string', 'min' => 6], // Ensure password has a minimum length
             ['password', 'required', 'on' => 'create'], // Password is required only when creating a new user
+            [['password'], 'required', 'on' => ['create']], // Ensure password is required on creation
+            [['password'], 'string', 'min' => 6], // Ensure password has a minimum length
         ];
     }
 
